@@ -59,7 +59,9 @@ class LoginScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     hintText: 'Masukkan email',
-                    prefixIcon: const Icon(Icons.email_outlined),
+                    prefixIcon: const Icon(
+                      Icons.email_outlined,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -74,7 +76,9 @@ class LoginScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Masukkan password',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: const Icon(
+                      Icons.lock_outline,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -102,6 +106,36 @@ class LoginScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 20),
+
+                // Menu Register
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Belum punya akun?',
+                      style: TextStyle(
+                        color: AppColors.gray,
+                      ),
+                    ),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const RegisterScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Daftar',
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 5),
 
                 // Keterangan
                 const Text(
