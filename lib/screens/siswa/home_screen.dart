@@ -17,10 +17,14 @@ class HomeScreen extends StatelessWidget {
               // HEADER SIMSAR
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(20, 20, 16, 24),
+                padding: const EdgeInsets.fromLTRB(20, 22, 16, 26),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppColors.navy, AppColors.blue],
+                    colors: [
+                      Color(0xFFF5F9FF),
+                      Color(0xFFE4F0FF),
+                      Color(0xFFD8E9FF),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -31,24 +35,30 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // LOGO ASLI SIMSAR
-                    Container(
-                      width: 54,
-                      height: 54,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(13),
-                      ),
+                    // LOGO ASLI SIMSAR DARI ASSETS
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(13),
                       child: Image.asset(
                         'assets/logo_simsar.png',
-                        width: 54,
-                        height: 54,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
+                        width: 64,
+                        height: 64,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(width: 12),
+
+                    const SizedBox(width: 14),
+
+                    // PEMBATAS LOGO DAN TEKS
+                    Container(
+                      width: 2,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB8D3F3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+
+                    const SizedBox(width: 13),
 
                     // NAMA APLIKASI
                     const Expanded(
@@ -58,18 +68,18 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             'SIMSAR',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.navy,
                               fontSize: 23,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          SizedBox(height: 5),
                           Text(
                             'Sistem Informasi Sarana dan '
                             'Prasarana Sekolah',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: Color(0xFF60758F),
                               fontSize: 11,
                               height: 1.4,
                             ),
@@ -92,7 +102,7 @@ class HomeScreen extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.notifications_none_rounded,
-                        color: Colors.white,
+                        color: AppColors.navy,
                         size: 27,
                       ),
                     ),
@@ -127,13 +137,16 @@ class HomeScreen extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
-                    // AKSI UTAMA: BUAT LAPORAN
+                    // KARTU AKSI UTAMA
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [AppColors.navy, AppColors.blue],
+                          colors: [
+                            AppColors.navy,
+                            AppColors.blue,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
