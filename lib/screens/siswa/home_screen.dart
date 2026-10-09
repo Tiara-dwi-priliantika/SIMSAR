@@ -20,10 +20,7 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 20, 16, 24),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      AppColors.navy,
-                      AppColors.blue,
-                    ],
+                    colors: [AppColors.navy, AppColors.blue],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -38,14 +35,17 @@ class HomeScreen extends StatelessWidget {
                     Container(
                       width: 54,
                       height: 54,
-                      padding: const EdgeInsets.all(4),
+                      clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(13),
                       ),
                       child: Image.asset(
                         'assets/logo_simsar.png',
-                        fit: BoxFit.contain,
+                        width: 54,
+                        height: 54,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -133,10 +133,7 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            AppColors.navy,
-                            AppColors.blue,
-                          ],
+                          colors: [AppColors.navy, AppColors.blue],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
