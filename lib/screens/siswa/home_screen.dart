@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import '../../utils/app_colors.dart';
 import 'lapor_kerusakan_screen.dart';
+import 'riwayat_laporan_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String namaPengguna;
@@ -16,368 +18,231 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // HEADER SIMSAR
+              // Header beranda
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(20, 22, 16, 26),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
                     colors: [
-                      Color(0xFFF5F9FF),
-                      Color(0xFFE4F0FF),
-                      Color(0xFFD8E9FF),
+                      AppColors.navy,
+                      AppColors.blue,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(28),
-                    bottomRight: Radius.circular(28),
-                  ),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(13),
-                      child: Image.asset(
-                        'assets/logo_simsar.png',
-                        width: 64,
-                        height: 64,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Container(
-                      width: 2,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFB8D3F3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    const SizedBox(width: 13),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'SIMSAR',
-                            style: TextStyle(
-                              color: AppColors.navy,
-                              fontSize: 23,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            'Sistem Informasi Sarana dan '
-                            'Prasarana Sekolah',
-                            style: TextStyle(
-                              color: Color(0xFF60758F),
-                              fontSize: 11,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Notifikasi',
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Fitur notifikasi belum tersedia.',
-                            ),
-                          ),
+                    Image.asset(
+                      'assets/logo_simsar.png',
+                      height: 55,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.school,
+                          color: Colors.white,
+                          size: 50,
                         );
                       },
-                      icon: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: AppColors.navy,
-                        size: 27,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Halo, $namaPengguna! 👋',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Selamat datang di SIMSAR',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Laporkan kerusakan sarana dan prasarana sekolah '
+                      'agar dapat segera ditindaklanjuti.',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        height: 1.5,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 25, 20, 28),
+              const SizedBox(height: 24),
+
+              // Judul menu
+              const Text(
+                'Menu Laporan',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.navy,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Kartu menu laporan
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Halo, $namaPengguna! 👋',
-                      style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.navy,
-                      ),
+                    const Icon(
+                      Icons.assignment_outlined,
+                      color: AppColors.blue,
+                      size: 40,
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 12),
                     const Text(
-                      'Yuk, ikut menjaga fasilitas sekolah '
-                      'agar tetap nyaman digunakan.',
+                      'Laporan Kerusakan',
                       style: TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                        color: AppColors.gray,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // KARTU AKSI UTAMA
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.navy,
-                            AppColors.blue,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.navy.withValues(alpha: 0.15),
-                            blurRadius: 14,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: const Icon(
-                              Icons.campaign_outlined,
-                              color: Colors.white,
-                              size: 29,
-                            ),
-                          ),
-                          const SizedBox(height: 17),
-                          const Text(
-                            'Temukan fasilitas yang rusak?',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 19,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Laporkan kerusakannya agar dapat '
-                            'segera ditindaklanjuti.',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 19),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 46,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const LaporKerusakanScreen(),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.add_rounded),
-                              label: const Text(
-                                'Buat Laporan',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.navy,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // RINGKASAN LAPORAN
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Ringkasan Laporan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.navy,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightBlue,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            'Data contoh',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: AppColors.navy,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _summaryCard(
-                            icon: Icons.hourglass_top_rounded,
-                            title: 'Menunggu',
-                            count: '2',
-                            color: const Color(0xFFE58A27),
-                            background: const Color(0xFFFFF2DF),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _summaryCard(
-                            icon: Icons.handyman_outlined,
-                            title: 'Diproses',
-                            count: '1',
-                            color: const Color(0xFF2878C8),
-                            background: const Color(0xFFE8F2FF),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _summaryCard(
-                            icon: Icons.check_circle_outline_rounded,
-                            title: 'Selesai',
-                            count: '3',
-                            color: const Color(0xFF21966A),
-                            background: const Color(0xFFE4F7EE),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // LAPORAN TERBARU
-                    const Text(
-                      'Laporan Terbaru',
-                      style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: AppColors.navy,
                       ),
                     ),
                     const SizedBox(height: 6),
                     const Text(
-                      'Berikut beberapa laporan yang pernah dibuat.',
+                      'Laporkan fasilitas sekolah yang rusak '
+                      'melalui aplikasi SIMSAR.',
                       style: TextStyle(
-                        fontSize: 13,
                         color: AppColors.gray,
+                        fontSize: 13,
+                        height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 15),
-                    _reportCard(
-                      icon: Icons.chair_alt_rounded,
-                      title: 'Kursi Kelas Rusak',
-                      location: 'Ruang Kelas 10A',
-                      status: 'Diproses',
-                      statusColor: const Color(0xFF2878C8),
-                      statusBackground: const Color(0xFFE8F2FF),
-                    ),
-                    const SizedBox(height: 12),
-                    _reportCard(
-                      icon: Icons.lightbulb_outline_rounded,
-                      title: 'Lampu Tidak Menyala',
-                      location: 'Ruang Kelas 8B',
-                      status: 'Selesai',
-                      statusColor: const Color(0xFF21966A),
-                      statusBackground: const Color(0xFFE4F7EE),
-                    ),
+                    const SizedBox(height: 18),
 
-                    const SizedBox(height: 22),
-
-                    // TIPS PELAPORAN
-                    Container(
+                    // Tombol Buat Laporan
+                    SizedBox(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.lightBlue,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(0xFFD5E8F7),
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const LaporKerusakanScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.add_circle_outline),
+                        label: const Text('Buat Laporan'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.navy,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
-                      child: const Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.info_outline_rounded,
-                            color: AppColors.blue,
-                            size: 25,
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Tips Pelaporan',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.navy,
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  'Gunakan foto yang jelas, pilih lokasi '
-                                  'yang sesuai, dan jelaskan kerusakan '
-                                  'secara singkat.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    height: 1.5,
-                                    color: AppColors.gray,
-                                  ),
-                                ),
-                              ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Tombol Riwayat Laporan
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const RiwayatLaporanScreen(),
                             ),
+                          );
+                        },
+                        icon: const Icon(Icons.history),
+                        label: const Text('Riwayat Laporan'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.navy,
+                          side: const BorderSide(
+                            color: AppColors.navy,
                           ),
-                        ],
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Informasi
+              const Text(
+                'Tips Pelaporan',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.navy,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.lightBlue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: AppColors.blue,
+                      size: 28,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Sertakan foto kerusakan dan lokasi yang jelas '
+                        'agar petugas lebih mudah menemukan fasilitas '
+                        'yang perlu diperbaiki.',
+                        style: TextStyle(
+                          color: AppColors.navy,
+                          fontSize: 13,
+                          height: 1.6,
+                        ),
                       ),
                     ),
                   ],
@@ -386,157 +251,6 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  // KARTU RINGKASAN STATUS
-  Widget _summaryCard({
-    required IconData icon,
-    required String title,
-    required String count,
-    required Color color,
-    required Color background,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 15,
-        horizontal: 5,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.lightGray,
-        ),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 22,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            count,
-            style: TextStyle(
-              fontSize: 23,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 10,
-              color: AppColors.gray,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // KARTU LAPORAN TERBARU
-  Widget _reportCard({
-    required IconData icon,
-    required String title,
-    required String location,
-    required String status,
-    required Color statusColor,
-    required Color statusBackground,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.lightGray,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.lightBlue,
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: Icon(
-              icon,
-              color: AppColors.navy,
-              size: 27,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.navy,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on_outlined,
-                      size: 14,
-                      color: AppColors.gray,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        location,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.gray,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusBackground,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    status,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: statusColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
