@@ -27,6 +27,7 @@ class _LaporKerusakanScreenState
 
   // Foto disimpan sebagai XFile dan bytes agar kompatibel
   // dengan Flutter Web, Android, dan iOS.
+  // ignore: unused_field
   XFile? _foto;
   Uint8List? _fotoBytes;
 
