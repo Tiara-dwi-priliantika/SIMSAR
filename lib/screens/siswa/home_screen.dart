@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import '../../utils/app_colors.dart';
+import 'lapor_kerusakan_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String namaPengguna;
@@ -40,7 +40,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // LOGO SIMSAR
                     ClipRRect(
                       borderRadius: BorderRadius.circular(13),
                       child: Image.asset(
@@ -50,10 +49,7 @@ class HomeScreen extends StatelessWidget {
                         fit: BoxFit.contain,
                       ),
                     ),
-
                     const SizedBox(width: 14),
-
-                    // PEMBATAS LOGO DAN TEKS
                     Container(
                       width: 2,
                       height: 48,
@@ -62,10 +58,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-
                     const SizedBox(width: 13),
-
-                    // NAMA APLIKASI
                     const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,8 +85,6 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    // NOTIFIKASI
                     IconButton(
                       tooltip: 'Notifikasi',
                       onPressed: () {
@@ -120,7 +111,6 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // SAPAAN DINAMIS SESUAI PENGGUNA
                     Text(
                       'Halo, $namaPengguna! 👋',
                       style: const TextStyle(
@@ -129,9 +119,7 @@ class HomeScreen extends StatelessWidget {
                         color: AppColors.navy,
                       ),
                     ),
-
                     const SizedBox(height: 7),
-
                     const Text(
                       'Yuk, ikut menjaga fasilitas sekolah '
                       'agar tetap nyaman digunakan.',
@@ -141,7 +129,6 @@ class HomeScreen extends StatelessWidget {
                         color: AppColors.gray,
                       ),
                     ),
-
                     const SizedBox(height: 24),
 
                     // KARTU AKSI UTAMA
@@ -182,9 +169,7 @@ class HomeScreen extends StatelessWidget {
                               size: 29,
                             ),
                           ),
-
                           const SizedBox(height: 17),
-
                           const Text(
                             'Temukan fasilitas yang rusak?',
                             style: TextStyle(
@@ -193,9 +178,7 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
                           const SizedBox(height: 8),
-
                           const Text(
                             'Laporkan kerusakannya agar dapat '
                             'segera ditindaklanjuti.',
@@ -205,20 +188,17 @@ class HomeScreen extends StatelessWidget {
                               height: 1.5,
                             ),
                           ),
-
                           const SizedBox(height: 19),
-
                           SizedBox(
                             width: double.infinity,
                             height: 46,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Form laporan akan dibuat '
-                                      'pada langkah berikutnya.',
-                                    ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LaporKerusakanScreen(),
                                   ),
                                 );
                               },
@@ -276,9 +256,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 15),
-
                     Row(
                       children: [
                         Expanded(
@@ -324,9 +302,7 @@ class HomeScreen extends StatelessWidget {
                         color: AppColors.navy,
                       ),
                     ),
-
                     const SizedBox(height: 6),
-
                     const Text(
                       'Berikut beberapa laporan yang pernah dibuat.',
                       style: TextStyle(
@@ -334,9 +310,7 @@ class HomeScreen extends StatelessWidget {
                         color: AppColors.gray,
                       ),
                     ),
-
                     const SizedBox(height: 15),
-
                     _reportCard(
                       icon: Icons.chair_alt_rounded,
                       title: 'Kursi Kelas Rusak',
@@ -345,9 +319,7 @@ class HomeScreen extends StatelessWidget {
                       statusColor: const Color(0xFF2878C8),
                       statusBackground: const Color(0xFFE8F2FF),
                     ),
-
                     const SizedBox(height: 12),
-
                     _reportCard(
                       icon: Icons.lightbulb_outline_rounded,
                       title: 'Lampu Tidak Menyala',

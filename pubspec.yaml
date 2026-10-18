@@ -1,17 +1,23 @@
 
 name: simsar
 description: "A new Flutter project."
-publish_to: 'none'
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+# The following defines the version and build number for your application.
 version: 1.0.0+1
 
 environment:
   sdk: ^3.13.3
 
+# Dependencies specify other packages that your package needs in order to work.
 dependencies:
   flutter:
     sdk: flutter
 
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   image_picker: ^1.2.0
 
@@ -19,10 +25,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # The following package provides recommended lint rules for Flutter.
   flutter_lints: ^6.0.0
 
+# The following section is specific to Flutter packages.
 flutter:
+  # Ensures that Material Icons are included in the application.
   uses-material-design: true
 
   assets:
     - assets/logo_simsar.png
+
+  # To add custom fonts, add a fonts section here.
