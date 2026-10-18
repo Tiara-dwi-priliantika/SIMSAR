@@ -1,4 +1,5 @@
-import 'dart:io';
+
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +24,11 @@ class _LaporKerusakanScreenState
 
   String? _kategori;
   String? _lokasi;
-  File? _foto;
+
+  // Foto disimpan sebagai XFile dan bytes agar kompatibel
+  // dengan Flutter Web, Android, dan iOS.
+  XFile? _foto;
+  Uint8List? _fotoBytes;
 
   bool _sedangMengirim = false;
 
@@ -68,11 +73,18 @@ class _LaporKerusakanScreenState
         maxWidth: 1200,
       );
 
-      if (gambar != null && mounted) {
-        setState(() {
-          _foto = File(gambar.path);
-        });
-      }
+      if (gambar == null) return;
+
+      // Baca foto sebagai bytes agar bisa ditampilkan
+      // di Web maupun Android/iOS.
+      final Uint8List bytes = await gambar.readAsBytes();
+
+      if (!mounted) return;
+
+      setState(() {
+        _foto = gambar;
+        _fotoBytes = bytes;
+      });
     } catch (e) {
       if (!mounted) return;
 
@@ -127,7 +139,9 @@ class _LaporKerusakanScreenState
                     ),
                   ),
                   title: const Text('Galeri'),
-                  subtitle: const Text('Pilih foto dari perangkat'),
+                  subtitle: const Text(
+                    'Pilih foto dari perangkat',
+                  ),
                   onTap: () {
                     Navigator.pop(sheetContext);
                     _pilihFoto(ImageSource.gallery);
@@ -142,7 +156,9 @@ class _LaporKerusakanScreenState
                     ),
                   ),
                   title: const Text('Kamera'),
-                  subtitle: const Text('Ambil foto secara langsung'),
+                  subtitle: const Text(
+                    'Ambil foto secara langsung',
+                  ),
                   onTap: () {
                     Navigator.pop(sheetContext);
                     _pilihFoto(ImageSource.camera);
@@ -162,7 +178,7 @@ class _LaporKerusakanScreenState
       return;
     }
 
-    if (_foto == null) {
+    if (_fotoBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -274,6 +290,7 @@ class _LaporKerusakanScreenState
       _kategori = null;
       _lokasi = null;
       _foto = null;
+      _fotoBytes = null;
       _lokasiLainnyaController.clear();
       _deskripsiController.clear();
     });
@@ -579,7 +596,7 @@ class _LaporKerusakanScreenState
                 ),
                 const SizedBox(height: 12),
 
-                if (_foto == null)
+                if (_fotoBytes == null)
                   InkWell(
                     onTap: _tampilkanPilihanFoto,
                     borderRadius: BorderRadius.circular(16),
@@ -643,11 +660,21 @@ class _LaporKerusakanScreenState
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(15),
                           ),
-                          child: Image.file(
-                            _foto!,
+                          child: Image.memory(
+                            _fotoBytes!,
                             width: double.infinity,
                             height: 220,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox(
+                                height: 220,
+                                child: Center(
+                                  child: Text(
+                                    'Foto gagal ditampilkan',
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                         Padding(
@@ -681,6 +708,7 @@ class _LaporKerusakanScreenState
                                 onPressed: () {
                                   setState(() {
                                     _foto = null;
+                                    _fotoBytes = null;
                                   });
                                 },
                                 icon: const Icon(
@@ -710,7 +738,8 @@ class _LaporKerusakanScreenState
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton.icon(
-                    onPressed: _sedangMengirim ? null : _kirimLaporan,
+                    onPressed:
+                        _sedangMengirim ? null : _kirimLaporan,
                     icon: _sedangMengirim
                         ? const SizedBox(
                             width: 20,
