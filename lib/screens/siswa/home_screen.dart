@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import '../../utils/app_colors.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final String namaPengguna;
+
+  const HomeScreen({
+    super.key,
+    required this.namaPengguna,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // LOGO ASLI SIMSAR DARI ASSETS
+                    // LOGO SIMSAR
                     ClipRRect(
                       borderRadius: BorderRadius.circular(13),
                       child: Image.asset(
@@ -115,16 +120,18 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // SAPAAN PENGGUNA
-                    const Text(
-                      'Halo, Tiara! 👋',
-                      style: TextStyle(
+                    // SAPAAN DINAMIS SESUAI PENGGUNA
+                    Text(
+                      'Halo, $namaPengguna! 👋',
+                      style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: AppColors.navy,
                       ),
                     ),
+
                     const SizedBox(height: 7),
+
                     const Text(
                       'Yuk, ikut menjaga fasilitas sekolah '
                       'agar tetap nyaman digunakan.',
@@ -175,7 +182,9 @@ class HomeScreen extends StatelessWidget {
                               size: 29,
                             ),
                           ),
+
                           const SizedBox(height: 17),
+
                           const Text(
                             'Temukan fasilitas yang rusak?',
                             style: TextStyle(
@@ -184,7 +193,9 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+
                           const SizedBox(height: 8),
+
                           const Text(
                             'Laporkan kerusakannya agar dapat '
                             'segera ditindaklanjuti.',
@@ -194,7 +205,9 @@ class HomeScreen extends StatelessWidget {
                               height: 1.5,
                             ),
                           ),
+
                           const SizedBox(height: 19),
+
                           SizedBox(
                             width: double.infinity,
                             height: 46,
@@ -311,7 +324,9 @@ class HomeScreen extends StatelessWidget {
                         color: AppColors.navy,
                       ),
                     ),
+
                     const SizedBox(height: 6),
+
                     const Text(
                       'Berikut beberapa laporan yang pernah dibuat.',
                       style: TextStyle(
@@ -344,7 +359,7 @@ class HomeScreen extends StatelessWidget {
 
                     const SizedBox(height: 22),
 
-                    // INFORMASI PENDUKUNG
+                    // TIPS PELAPORAN
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
@@ -419,7 +434,9 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.lightGray),
+        border: Border.all(
+          color: AppColors.lightGray,
+        ),
       ),
       child: Column(
         children: [
@@ -473,7 +490,9 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.lightGray),
+        border: Border.all(
+          color: AppColors.lightGray,
+        ),
       ),
       child: Row(
         children: [
