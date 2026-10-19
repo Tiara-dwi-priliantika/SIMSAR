@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../data/laporan_dummy.dart';
 import '../../utils/app_colors.dart';
 
 class LaporKerusakanScreen extends StatefulWidget {
@@ -25,10 +26,7 @@ class _LaporKerusakanScreenState
   String? _kategori;
   String? _lokasi;
 
-  // Foto disimpan sebagai XFile dan bytes agar kompatibel
-  // dengan Flutter Web, Android, dan iOS.
-  // ignore: unused_field
-  XFile? _foto;
+
   Uint8List? _fotoBytes;
 
   bool _sedangMengirim = false;
@@ -76,14 +74,11 @@ class _LaporKerusakanScreenState
 
       if (gambar == null) return;
 
-      // Baca foto sebagai bytes agar bisa ditampilkan
-      // di Web maupun Android/iOS.
       final Uint8List bytes = await gambar.readAsBytes();
 
       if (!mounted) return;
 
       setState(() {
-        _foto = gambar;
         _fotoBytes = bytes;
       });
     } catch (e) {
@@ -175,6 +170,8 @@ class _LaporKerusakanScreenState
   }
 
   Future<void> _kirimLaporan() async {
+    if (_sedangMengirim) return;
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -195,106 +192,137 @@ class _LaporKerusakanScreenState
       _sedangMengirim = true;
     });
 
-    // Simulasi pengiriman.
-    // Data belum disimpan ke database.
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      // Simulasi proses pengiriman laporan.
+      await Future.delayed(const Duration(seconds: 1));
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      _sedangMengirim = false;
-    });
+      final String lokasiLaporan =
+          _lokasi == 'Lokasi Lainnya'
+              ? _lokasiLainnyaController.text.trim()
+              : _lokasi!;
 
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          contentPadding: const EdgeInsets.fromLTRB(
-            24,
-            26,
-            24,
-            20,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 70,
-                height: 70,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE4F7EE),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_rounded,
-                  size: 45,
-                  color: AppColors.green,
-                ),
-              ),
-              const SizedBox(height: 18),
-              const Text(
-                'Laporan Berhasil Dibuat!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.navy,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Formulir berhasil divalidasi. Saat ini laporan '
-                'belum disimpan ke database sehingga belum '
-                'tercatat secara permanen.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.5,
-                  color: AppColors.gray,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.navy,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 13,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+      // Simpan laporan ke sumber data bersama.
+      final laporanBaru = Laporan(
+        id: 'L${DateTime.now().microsecondsSinceEpoch}',
+        kategori: _kategori!,
+        lokasi: lokasiLaporan,
+        deskripsi: _deskripsiController.text.trim(),
+        tanggal: DateTime.now(),
+        status: 'Menunggu',
+        foto: _fotoBytes,
+      );
+
+      LaporanDummy.tambah(laporanBaru);
+
+      setState(() {
+        _sedangMengirim = false;
+      });
+
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            contentPadding: const EdgeInsets.fromLTRB(
+              24,
+              26,
+              24,
+              20,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 70,
+                  height: 70,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFE4F7EE),
+                    shape: BoxShape.circle,
                   ),
-                  child: const Text('Mengerti'),
+                  child: const Icon(
+                    Icons.check_circle_rounded,
+                    size: 45,
+                    color: AppColors.green,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                const SizedBox(height: 18),
+                const Text(
+                  'Laporan Berhasil Dibuat!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.navy,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Laporan berhasil ditambahkan dan dapat '
+                  'dilihat di riwayat laporan. Status awal '
+                  'laporan adalah Menunggu.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: AppColors.gray,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.navy,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 13,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Mengerti'),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    _formKey.currentState!.reset();
+      _formKey.currentState!.reset();
 
-    setState(() {
-      _kategori = null;
-      _lokasi = null;
-      _foto = null;
-      _fotoBytes = null;
-      _lokasiLainnyaController.clear();
-      _deskripsiController.clear();
-    });
+      setState(() {
+        _kategori = null;
+        _lokasi = null;
+        _fotoBytes = null;
+        _lokasiLainnyaController.clear();
+        _deskripsiController.clear();
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _sedangMengirim = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal menambahkan laporan: $e'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   InputDecoration _dekorasiInput({
@@ -708,7 +736,6 @@ class _LaporKerusakanScreenState
                                 tooltip: 'Hapus foto',
                                 onPressed: () {
                                   setState(() {
-                                    _foto = null;
                                     _fotoBytes = null;
                                   });
                                 },
