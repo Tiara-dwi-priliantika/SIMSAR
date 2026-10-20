@@ -89,47 +89,181 @@ class AdminDashboardScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+
+                      // Ikon notifikasi
                       IconButton(
-                        tooltip: 'Keluar',
+                        tooltip: 'Notifikasi',
                         onPressed: () {
                           showDialog<void>(
                             context: context,
                             builder: (dialogContext) {
                               return AlertDialog(
-                                title: const Text('Keluar dari akun?'),
-                                content: const Text(
-                                  'Apakah kamu yakin ingin keluar '
-                                  'dari dashboard admin?',
+                                title: const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.notifications_active_rounded,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text('Notifikasi'),
+                                    ),
+                                  ],
+                                ),
+                                content: SizedBox(
+                                  width: double.maxFinite,
+                                  child: daftarLaporan.isEmpty
+                                      ? const Text(
+                                          'Belum ada laporan kerusakan.',
+                                        )
+                                      : Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '$menunggu laporan menunggu '
+                                              'ditindaklanjuti.',
+                                            ),
+                                            const SizedBox(height: 12),
+                                            ...daftarLaporan.take(3).map(
+                                              (laporan) => ListTile(
+                                                contentPadding:
+                                                    EdgeInsets.zero,
+                                                leading: Icon(
+                                                  Icons.assignment_rounded,
+                                                  color: AppColors.navy,
+                                                ),
+                                                title: Text(
+                                                  laporan.judul,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                subtitle: Text(
+                                                  'Status: ${laporan.status}',
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
                                       Navigator.pop(dialogContext);
                                     },
-                                    child: const Text('Batal'),
+                                    child: const Text('Tutup'),
                                   ),
-                                  ElevatedButton(
+                                  if (daftarLaporan.isNotEmpty)
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(dialogContext);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const AdminLaporanScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Lihat Laporan'),
+                                    ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        icon: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Icon(
+                              Icons.notifications_none_rounded,
+                              color: AppColors.navy,
+                              size: 27,
+                            ),
+                            if (menunggu > 0)
+                              Positioned(
+                                right: -2,
+                                top: -2,
+                                child: Container(
+                                  width: 9,
+                                  height: 9,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      // Foto profil admin
+                      IconButton(
+                        tooltip: 'Profil Admin',
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (dialogContext) {
+                              return AlertDialog(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: AppColors.lightBlue,
+                                      child: Icon(
+                                        Icons.person_rounded,
+                                        size: 40,
+                                        color: AppColors.navy,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Text(
+                                      akun.nama,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'Administrator SIMSAR',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
                                     onPressed: () {
                                       Navigator.pop(dialogContext);
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen(),
-                                        ),
-                                        (route) => false,
-                                      );
                                     },
-                                    child: const Text('Keluar'),
+                                    child: const Text('Tutup'),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.pop(dialogContext);
+                                      _konfirmasiKeluar(context);
+                                    },
+                                    icon: const Icon(Icons.logout_rounded),
+                                    label: const Text('Keluar'),
                                   ),
                                 ],
                               );
                             },
                           );
                         },
-                        icon: Icon(
-                          Icons.logout_rounded,
-                          color: AppColors.navy,
+                        icon: CircleAvatar(
+                          radius: 17,
+                          backgroundColor: AppColors.lightBlue,
+                          child: Icon(
+                            Icons.person_rounded,
+                            color: AppColors.navy,
+                            size: 22,
+                          ),
                         ),
                       ),
                     ],
@@ -341,6 +475,42 @@ class AdminDashboardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+// Dialog konfirmasi logout
+void _konfirmasiKeluar(BuildContext context) {
+  showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: const Text('Keluar dari akun?'),
+        content: const Text(
+          'Apakah kamu yakin ingin keluar dari dashboard admin?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+            },
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+                (route) => false,
+              );
+            },
+            child: const Text('Keluar'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class _KartuStatistik extends StatelessWidget {
