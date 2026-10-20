@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import '../../utils/app_colors.dart';
+import '../../data/akun_dummy.dart';
 import '../siswa/home_screen.dart';
 import 'register_screen.dart';
 
@@ -20,10 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? emailError;
   String? passwordError;
-
   bool sembunyikanPassword = true;
 
-  // PROSES LOGIN DAN VALIDASI
   void login() {
     String email = emailController.text.trim();
     String password = passwordController.text;
@@ -49,26 +48,30 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // MENGAMBIL NAMA DARI EMAIL
-    String nama = email.split('@')[0];
+    // Memeriksa akun pada data dummy
+    AkunDummy? akun = PengelolaAkun.login(
+      email: email,
+      password: password,
+    );
 
-    nama = nama
-        .replaceAll('.', ' ')
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map(
-          (kata) => kata.isEmpty
-              ? ''
-              : kata[0].toUpperCase() + kata.substring(1),
-        )
-        .join(' ');
+    if (akun == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Email atau password salah. Silakan periksa kembali.',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    // MASUK KE BERANDA
+    // Masuk menggunakan nama dari akun yang terdaftar
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => HomeScreen(
-          namaPengguna: nama,
+          namaPengguna: akun.nama,
         ),
       ),
     );
@@ -94,17 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Column(
               children: [
-                // LOGO SIMSAR
                 Image.asset(
                   'assets/logo_simsar.png',
                   width: 150,
                   height: 150,
                   fit: BoxFit.contain,
                 ),
-
                 const SizedBox(height: 20),
-
-                // JUDUL
                 const Text(
                   'Selamat Datang di SIMSAR',
                   textAlign: TextAlign.center,
@@ -114,9 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppColors.navy,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 const Text(
                   'Sistem Informasi Sarana dan Prasarana Sekolah',
                   textAlign: TextAlign.center,
@@ -125,10 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppColors.gray,
                   ),
                 ),
-
                 const SizedBox(height: 35),
 
-                // INPUT EMAIL
+                // Input email
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -143,9 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     hintText: 'Masukkan email',
-                    prefixIcon: const Icon(
-                      Icons.email_outlined,
-                    ),
+                    prefixIcon: const Icon(Icons.email_outlined),
                     errorText: emailError,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -165,10 +159,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 18),
 
-                // INPUT PASSWORD
+                // Input password
                 TextField(
                   controller: passwordController,
                   obscureText: sembunyikanPassword,
@@ -186,9 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Masukkan password',
-                    prefixIcon: const Icon(
-                      Icons.lock_outline,
-                    ),
+                    prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       tooltip: sembunyikanPassword
                           ? 'Tampilkan password'
@@ -224,10 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 25),
 
-                // TOMBOL LOGIN
+                // Tombol login
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -242,10 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
-                // MENU DAFTAR
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -269,9 +257,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 5),
-
                 const Text(
                   'Silakan masuk menggunakan akun yang telah terdaftar.',
                   textAlign: TextAlign.center,
