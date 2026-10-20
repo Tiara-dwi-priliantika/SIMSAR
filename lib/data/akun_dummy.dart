@@ -4,12 +4,14 @@ class AkunDummy {
   String email;
   String nisNip;
   String password;
+  String role;
 
   AkunDummy({
     required this.nama,
     required this.email,
     required this.nisNip,
     required this.password,
+    this.role = 'pengguna',
   });
 }
 
@@ -20,10 +22,10 @@ class PengelolaAkun {
       email: 'tiara@gmail.com',
       nisNip: '123456',
       password: 'tiara123',
+      role: 'admin',
     ),
   ];
 
-  // Mendaftarkan akun baru
   static String? daftar({
     required String nama,
     required String email,
@@ -42,13 +44,13 @@ class PengelolaAkun {
         email: email,
         nisNip: nisNip,
         password: password,
+        role: 'pengguna',
       ),
     );
 
     return null;
   }
 
-  // Memeriksa akun saat login
   static AkunDummy? login({
     required String email,
     required String password,
