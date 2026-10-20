@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+
+import '../../data/laporan_dummy.dart';
 import '../../utils/app_colors.dart';
 
 class RiwayatLaporanScreen extends StatefulWidget {
@@ -16,59 +18,43 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
 
   String _filterStatus = 'Semua';
 
-  final List<Map<String, dynamic>> _laporan = [
-    {
-      'judul': 'Kursi Kelas Rusak',
-      'kategori': 'Meja dan Kursi',
-      'lokasi': 'Ruang Kelas 10A',
-      'tanggal': '18 Okt 2026',
-      'status': 'Diproses',
-      'deskripsi': 'Kaki kursi mengalami kerusakan.',
-      'icon': Icons.chair_alt_rounded,
-    },
-    {
-      'judul': 'Lampu Tidak Menyala',
-      'kategori': 'Kelistrikan',
-      'lokasi': 'Ruang Kelas 8B',
-      'tanggal': '16 Okt 2026',
-      'status': 'Selesai',
-      'deskripsi': 'Lampu kelas tidak dapat menyala.',
-      'icon': Icons.lightbulb_outline_rounded,
-    },
-    {
-      'judul': 'Komputer Tidak Berfungsi',
-      'kategori': 'Elektronik',
-      'lokasi': 'Laboratorium Komputer',
-      'tanggal': '14 Okt 2026',
-      'status': 'Menunggu',
-      'deskripsi': 'Komputer tidak dapat dihidupkan.',
-      'icon': Icons.computer_rounded,
-    },
-  ];
-
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
-  List<Map<String, dynamic>> get _laporanTersaring {
-    final kataKunci = _searchController.text.toLowerCase();
+  String _formatTanggal(DateTime tanggal) {
+    const bulan = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
 
-    return _laporan.where((laporan) {
+    return '${tanggal.day} ${bulan[tanggal.month - 1]} ${tanggal.year}';
+  }
+
+  List<Laporan> _laporanTersaring(List<Laporan> semuaLaporan) {
+    final kataKunci = _searchController.text.toLowerCase().trim();
+
+    return semuaLaporan.where((laporan) {
       final cocokStatus = _filterStatus == 'Semua' ||
-          laporan['status'] == _filterStatus;
+          laporan.status == _filterStatus;
 
       final cocokPencarian =
-          laporan['judul'].toString().toLowerCase().contains(
-                kataKunci,
-              ) ||
-              laporan['lokasi'].toString().toLowerCase().contains(
-                    kataKunci,
-                  ) ||
-              laporan['kategori'].toString().toLowerCase().contains(
-                    kataKunci,
-                  );
+          laporan.judul.toLowerCase().contains(kataKunci) ||
+          laporan.lokasi.toLowerCase().contains(kataKunci) ||
+          laporan.kategori.toLowerCase().contains(kataKunci) ||
+          laporan.deskripsi.toLowerCase().contains(kataKunci);
 
       return cocokStatus && cocokPencarian;
     }).toList();
@@ -100,7 +86,7 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
     }
   }
 
-  void _tampilkanDetail(Map<String, dynamic> laporan) {
+  void _tampilkanDetail(Laporan laporan) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -112,7 +98,7 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
       ),
       builder: (context) {
         return SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(22, 12, 22, 28),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -148,7 +134,7 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Icon(
-                        laporan['icon'] as IconData,
+                        laporan.ikon,
                         size: 29,
                         color: AppColors.navy,
                       ),
@@ -159,7 +145,7 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            laporan['judul'].toString(),
+                            laporan.judul,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -168,7 +154,7 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            laporan['tanggal'].toString(),
+                            _formatTanggal(laporan.tanggal),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.gray,
@@ -180,17 +166,11 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
                   ],
                 ),
                 const SizedBox(height: 22),
-                _detailBaris(
-                  'Kategori',
-                  laporan['kategori'].toString(),
-                ),
-                _detailBaris(
-                  'Lokasi',
-                  laporan['lokasi'].toString(),
-                ),
+                _detailBaris('Kategori', laporan.kategori),
+                _detailBaris('Lokasi', laporan.lokasi),
                 _detailBaris(
                   'Tanggal',
-                  laporan['tanggal'].toString(),
+                  _formatTanggal(laporan.tanggal),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -202,12 +182,32 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
                 ),
                 const SizedBox(height: 7),
                 Text(
-                  laporan['deskripsi'].toString(),
+                  laporan.deskripsi,
                   style: const TextStyle(
                     height: 1.5,
                     color: AppColors.gray,
                   ),
                 ),
+                if (laporan.foto != null) ...[
+                  const SizedBox(height: 18),
+                  const Text(
+                    'Foto Kerusakan',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.navy,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.memory(
+                      laporan.foto!,
+                      width: double.infinity,
+                      height: 210,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 18),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -215,18 +215,14 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
                     vertical: 9,
                   ),
                   decoration: BoxDecoration(
-                    color: _latarStatus(
-                      laporan['status'].toString(),
-                    ),
+                    color: _latarStatus(laporan.status),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    'Status: ${laporan['status']}',
+                    'Status: ${laporan.status}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: _warnaStatus(
-                        laporan['status'].toString(),
-                      ),
+                      color: _warnaStatus(laporan.status),
                     ),
                   ),
                 ),
@@ -272,8 +268,6 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final laporan = _laporanTersaring;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -296,243 +290,255 @@ class _RiwayatLaporanScreenState extends State<RiwayatLaporanScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 22),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(24),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Pantau laporan kerusakanmu',
-                    style: TextStyle(
-                      color: AppColors.gray,
-                      fontSize: 13,
+        child: ValueListenableBuilder<List<Laporan>>(
+          valueListenable: LaporanDummy.laporan,
+          builder: (context, semuaLaporan, _) {
+            final laporan = _laporanTersaring(semuaLaporan);
+
+            return Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 22),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(24),
                     ),
                   ),
-                  const SizedBox(height: 17),
-                  Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _kartuRingkasan(
-                        'Semua',
-                        _laporan.length,
-                        AppColors.navy,
+                      const Text(
+                        'Pantau laporan kerusakanmu',
+                        style: TextStyle(
+                          color: AppColors.gray,
+                          fontSize: 13,
+                        ),
                       ),
-                      const SizedBox(width: 10),
-                      _kartuRingkasan(
-                        'Diproses',
-                        _laporan
-                            .where((e) => e['status'] == 'Diproses')
-                            .length,
-                        const Color(0xFF2878C8),
-                      ),
-                      const SizedBox(width: 10),
-                      _kartuRingkasan(
-                        'Selesai',
-                        _laporan
-                            .where((e) => e['status'] == 'Selesai')
-                            .length,
-                        const Color(0xFF21966A),
+                      const SizedBox(height: 17),
+                      Row(
+                        children: [
+                          _kartuRingkasan(
+                            'Semua',
+                            semuaLaporan.length,
+                            AppColors.navy,
+                          ),
+                          const SizedBox(width: 10),
+                          _kartuRingkasan(
+                            'Diproses',
+                            semuaLaporan
+                                .where((e) => e.status == 'Diproses')
+                                .length,
+                            const Color(0xFF2878C8),
+                          ),
+                          const SizedBox(width: 10),
+                          _kartuRingkasan(
+                            'Selesai',
+                            semuaLaporan
+                                .where((e) => e.status == 'Selesai')
+                                .length,
+                            const Color(0xFF21966A),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (_) => setState(() {}),
-                decoration: InputDecoration(
-                  hintText: 'Cari laporan atau lokasi...',
-                  prefixIcon: const Icon(
-                    Icons.search_rounded,
-                    color: AppColors.gray,
-                  ),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.close_rounded),
-                        )
-                      : null,
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (_) => setState(() {}),
+                    decoration: InputDecoration(
+                      hintText: 'Cari laporan atau lokasi...',
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        color: AppColors.gray,
+                      ),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.close_rounded),
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: 48,
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _tombolFilter('Semua'),
-                  _tombolFilter('Menunggu'),
-                  _tombolFilter('Diproses'),
-                  _tombolFilter('Selesai'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: laporan.isEmpty
-                  ? _tampilanKosong()
-                  : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(
-                        20,
-                        8,
-                        20,
-                        24,
-                      ),
-                      itemCount: laporan.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final item = laporan[index];
-                        final status = item['status'].toString();
-                        final warna = _warnaStatus(status);
+                SizedBox(
+                  height: 48,
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _tombolFilter('Semua'),
+                      _tombolFilter('Menunggu'),
+                      _tombolFilter('Diproses'),
+                      _tombolFilter('Selesai'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: laporan.isEmpty
+                      ? _tampilanKosong()
+                      : ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(
+                            20,
+                            8,
+                            20,
+                            24,
+                          ),
+                          itemCount: laporan.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final item = laporan[index];
+                            final status = item.status;
+                            final warna = _warnaStatus(status);
 
-                        return Material(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(17),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(17),
-                            onTap: () => _tampilkanDetail(item),
-                            child: Container(
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
+                            return Material(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(17),
+                              child: InkWell(
                                 borderRadius: BorderRadius.circular(17),
-                                border: Border.all(
-                                  color: AppColors.lightGray,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 52,
-                                    height: 52,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.lightBlue,
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                    child: Icon(
-                                      item['icon'] as IconData,
-                                      color: AppColors.navy,
-                                      size: 28,
+                                onTap: () => _tampilkanDetail(item),
+                                child: Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(17),
+                                    border: Border.all(
+                                      color: AppColors.lightGray,
                                     ),
                                   ),
-                                  const SizedBox(width: 13),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item['judul'].toString(),
-                                          style: const TextStyle(
-                                            color: AppColors.navy,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 52,
+                                        height: 52,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.lightBlue,
+                                          borderRadius:
+                                              BorderRadius.circular(14),
                                         ),
-                                        const SizedBox(height: 7),
-                                        Text(
-                                          item['kategori'].toString(),
-                                          style: const TextStyle(
-                                            color: AppColors.gray,
-                                            fontSize: 12,
-                                          ),
+                                        child: Icon(
+                                          item.ikon,
+                                          color: AppColors.navy,
+                                          size: 28,
                                         ),
-                                        const SizedBox(height: 5),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.location_on_outlined,
-                                              size: 14,
-                                              color: AppColors.gray,
-                                            ),
-                                            const SizedBox(width: 3),
-                                            Expanded(
-                                              child: Text(
-                                                item['lokasi'].toString(),
-                                                style: const TextStyle(
-                                                  color: AppColors.gray,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 9),
-                                        Wrap(
-                                          spacing: 8,
-                                          runSpacing: 6,
+                                      ),
+                                      const SizedBox(width: 13),
+                                      Expanded(
+                                        child: Column(
                                           crossAxisAlignment:
-                                              WrapCrossAlignment.center,
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 9,
-                                                vertical: 5,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: _latarStatus(status),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Text(
-                                                status,
-                                                style: TextStyle(
-                                                  color: warna,
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                            Text(
+                                              item.judul,
+                                              style: const TextStyle(
+                                                color: AppColors.navy,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                               ),
                                             ),
+                                            const SizedBox(height: 7),
                                             Text(
-                                              item['tanggal'].toString(),
+                                              item.kategori,
                                               style: const TextStyle(
                                                 color: AppColors.gray,
-                                                fontSize: 11,
+                                                fontSize: 12,
                                               ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.location_on_outlined,
+                                                  size: 14,
+                                                  color: AppColors.gray,
+                                                ),
+                                                const SizedBox(width: 3),
+                                                Expanded(
+                                                  child: Text(
+                                                    item.lokasi,
+                                                    style: const TextStyle(
+                                                      color: AppColors.gray,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 9),
+                                            Wrap(
+                                              spacing: 8,
+                                              runSpacing: 6,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 9,
+                                                    vertical: 5,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        _latarStatus(status),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      8,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    status,
+                                                    style: TextStyle(
+                                                      color: warna,
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  _formatTanggal(item.tanggal),
+                                                  style: const TextStyle(
+                                                    color: AppColors.gray,
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      const Icon(
+                                        Icons.chevron_right_rounded,
+                                        color: AppColors.gray,
+                                      ),
+                                    ],
                                   ),
-                                  const Icon(
-                                    Icons.chevron_right_rounded,
-                                    color: AppColors.gray,
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
+                            );
+                          },
+                        ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
