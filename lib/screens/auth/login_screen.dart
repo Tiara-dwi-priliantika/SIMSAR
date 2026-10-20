@@ -1,8 +1,10 @@
 
 import 'package:flutter/material.dart';
+
 import '../../utils/app_colors.dart';
 import '../../data/akun_dummy.dart';
 import '../siswa/home_screen.dart';
+import '../admin/admin_dashboard_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -67,15 +69,26 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Mengirim akun yang berhasil login ke dashboard.
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomeScreen(
-          akun: akun,
+    // Mengarahkan pengguna berdasarkan role akun.
+    if (akun.role == 'admin') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AdminDashboardScreen(
+            akun: akun,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(
+            akun: akun,
+          ),
+        ),
+      );
+    }
   }
 
   @override
