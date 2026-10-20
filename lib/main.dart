@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/auth/login_screen.dart';
 import 'utils/app_theme.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const SimSarApp());
@@ -19,7 +19,7 @@ class SimSarApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
 
       // Halaman pertama yang dibuka
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }
