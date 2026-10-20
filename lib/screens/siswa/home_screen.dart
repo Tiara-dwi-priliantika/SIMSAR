@@ -1,16 +1,18 @@
 
 import 'package:flutter/material.dart';
+import '../../data/akun_dummy.dart';
 import '../../data/laporan_dummy.dart';
 import '../../utils/app_colors.dart';
 import 'lapor_kerusakan_screen.dart';
 import 'riwayat_laporan_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  final String namaPengguna;
+  final AkunDummy akun;
 
   const HomeScreen({
     super.key,
-    required this.namaPengguna,
+    required this.akun,
   });
 
   @override
@@ -104,22 +106,47 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        IconButton(
-                          tooltip: 'Notifikasi',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Fitur notifikasi belum tersedia.',
-                                ),
+
+                        // IKON NOTIFIKASI DAN PROFIL
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              tooltip: 'Notifikasi',
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Fitur notifikasi belum tersedia.',
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.notifications_none_rounded,
+                                color: AppColors.navy,
+                                size: 27,
                               ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_none_rounded,
-                            color: AppColors.navy,
-                            size: 27,
-                          ),
+                            ),
+                            IconButton(
+                              tooltip: 'Profil Saya',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(
+                                      akun: akun,
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.account_circle_outlined,
+                                color: AppColors.navy,
+                                size: 29,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -131,7 +158,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Halo, $namaPengguna! 👋',
+                          'Halo, ${akun.nama}! 👋',
                           style: const TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
