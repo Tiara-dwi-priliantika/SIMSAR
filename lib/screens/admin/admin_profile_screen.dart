@@ -26,7 +26,11 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
   late TextEditingController nisNipController;
 
   Uint8List? fotoProfil;
+  Uint8List? fotoProfilSebelumEdit;
+
   final ImagePicker _picker = ImagePicker();
+
+  bool sedangEdit = false;
 
   @override
   void initState() {
@@ -45,8 +49,22 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
     super.dispose();
   }
 
-  // Memilih foto profil dari perangkat
+  // Memulai mode edit untuk seluruh informasi profil.
+  void _mulaiEditProfil() {
+    setState(() {
+      namaController.text = widget.akun.nama;
+      emailController.text = widget.akun.email;
+      nisNipController.text = widget.akun.nisNip;
+
+      fotoProfilSebelumEdit = fotoProfil;
+      sedangEdit = true;
+    });
+  }
+
+  // Memilih foto hanya ketika mode edit aktif.
   Future<void> _pilihFotoProfil() async {
+    if (!sedangEdit) return;
+
     try {
       final XFile? gambar = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -58,17 +76,11 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
       final Uint8List bytes = await gambar.readAsBytes();
 
-      if (!mounted) return;
+      if (!mounted || !sedangEdit) return;
 
       setState(() {
         fotoProfil = bytes;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Foto profil berhasil diganti.'),
-        ),
-      );
     } catch (e) {
       if (!mounted) return;
 
@@ -80,174 +92,96 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
     }
   }
 
-  // Mengembalikan foto profil ke ikon default
+  // Menghapus foto sementara ketika sedang mengedit.
   void _hapusFotoProfil() {
     setState(() {
       fotoProfil = null;
     });
+  }
 
-    Navigator.pop(context);
+  // Menyimpan seluruh perubahan profil sekaligus.
+  void _simpanProfil() {
+    final nama = namaController.text.trim();
+    final email = emailController.text.trim();
+    final nisNip = nisNipController.text.trim();
+
+    if (nama.isEmpty || email.isEmpty || nisNip.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Semua kolom harus diisi.'),
+        ),
+      );
+      return;
+    }
+
+    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Masukkan alamat email yang valid.'),
+        ),
+      );
+      return;
+    }
+
+    // Memastikan email tidak digunakan akun lain.
+    for (final akun in PengelolaAkun.daftarAkun) {
+      if (!identical(akun, widget.akun) &&
+          akun.email.toLowerCase() == email.toLowerCase()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email sudah digunakan akun lain.'),
+          ),
+        );
+        return;
+      }
+    }
+
+    setState(() {
+      widget.akun.nama = nama;
+      widget.akun.email = email;
+      widget.akun.nisNip = nisNip;
+
+      fotoProfilSebelumEdit = null;
+      sedangEdit = false;
+    });
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Foto profil dikembalikan ke foto default.'),
+        content: Text('Profil berhasil diperbarui!'),
+        backgroundColor: Colors.green,
       ),
     );
   }
 
-  // Menu untuk mengatur foto profil
-  void _tampilkanMenuFoto() {
-    showModalBottomSheet<void>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(22),
-        ),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Foto Profil Admin',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 18),
-                ListTile(
-                  leading: const Icon(
-                    Icons.photo_library_outlined,
-                    color: Color(0xFF173A67),
-                  ),
-                  title: const Text('Pilih Foto dari Galeri'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pilihFotoProfil();
-                  },
-                ),
-                if (fotoProfil != null)
-                  ListTile(
-                    leading: const Icon(
-                      Icons.delete_outline_rounded,
-                      color: Colors.red,
-                    ),
-                    title: const Text('Hapus Foto Profil'),
-                    onTap: _hapusFotoProfil,
-                  ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+  // Membatalkan semua perubahan, termasuk foto.
+  void _batalEditProfil() {
+    setState(() {
+      namaController.text = widget.akun.nama;
+      emailController.text = widget.akun.email;
+      nisNipController.text = widget.akun.nisNip;
+
+      fotoProfil = fotoProfilSebelumEdit;
+      fotoProfilSebelumEdit = null;
+
+      sedangEdit = false;
+    });
   }
 
-  // Mengedit informasi akun
-  void _editProfil() {
-    namaController.text = widget.akun.nama;
-    emailController.text = widget.akun.email;
-    nisNipController.text = widget.akun.nisNip;
-
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Edit Profil'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: namaController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nama Lengkap',
-                    prefixIcon: Icon(Icons.person_outline_rounded),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                TextField(
-                  controller: nisNipController,
-                  decoration: const InputDecoration(
-                    labelText: 'NIS/NIP',
-                    prefixIcon: Icon(Icons.badge_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Batal'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.navy,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                final nama = namaController.text.trim();
-                final email = emailController.text.trim();
-                final nisNip = nisNipController.text.trim();
-
-                if (nama.isEmpty ||
-                    email.isEmpty ||
-                    nisNip.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Semua kolom harus diisi.'),
-                    ),
-                  );
-                  return;
-                }
-
-                setState(() {
-                  widget.akun.nama = nama;
-                  widget.akun.email = email;
-                  widget.akun.nisNip = nisNip;
-                });
-
-                Navigator.pop(dialogContext);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Profil berhasil diperbarui.'),
-                  ),
-                );
-              },
-              child: const Text('Simpan'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Konfirmasi logout
+  // Konfirmasi logout.
   void _konfirmasiKeluar() {
     showDialog<void>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Keluar dari akun?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: const Text(
+            'Keluar dari akun?',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: const Text(
             'Apakah kamu yakin ingin keluar dari akun admin?',
           ),
@@ -288,20 +222,22 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
         backgroundColor: AppColors.navy,
         foregroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Profil Admin',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          sedangEdit ? 'Edit Profil Admin' : 'Profil Admin',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // Kartu profil admin
+          // KARTU PROFIL ADMIN
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [
                   AppColors.navy,
                   AppColors.blue,
@@ -313,7 +249,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
             ),
             child: Column(
               children: [
-                // Foto profil dengan tombol kamera
+                // FOTO PROFIL
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
@@ -333,48 +269,70 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                             ? const Icon(
                                 Icons.person_rounded,
                                 size: 58,
-                                color: Color(0xFF173A67),
+                                color: AppColors.navy,
                               )
                             : null,
                       ),
                     ),
-                    Material(
-                      color: Colors.white,
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        onTap: _tampilkanMenuFoto,
-                        customBorder: const CircleBorder(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(9),
-                          child: Icon(
-                            Icons.camera_alt_rounded,
-                            size: 20,
-                            color: Color(0xFF173A67),
+
+                    // Tombol kamera hanya tampil saat mode edit.
+                    if (sedangEdit)
+                      Material(
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          onTap: _pilihFotoProfil,
+                          customBorder: const CircleBorder(),
+                          child: const Padding(
+                            padding: EdgeInsets.all(9),
+                            child: Icon(
+                              Icons.camera_alt_rounded,
+                              size: 20,
+                              color: AppColors.navy,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
 
                 const SizedBox(height: 12),
 
-                TextButton.icon(
-                  onPressed: _tampilkanMenuFoto,
-                  icon: const Icon(
-                    Icons.add_a_photo_outlined,
-                    size: 17,
+                if (sedangEdit) ...[
+                  TextButton.icon(
+                    onPressed: _pilihFotoProfil,
+                    icon: const Icon(
+                      Icons.add_a_photo_outlined,
+                      size: 17,
+                    ),
+                    label: const Text('Ganti Foto Profil'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                    ),
                   ),
-                  label: const Text('Ganti Foto Profil'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                  ),
-                ),
+
+                  if (fotoProfil != null)
+                    TextButton.icon(
+                      onPressed: _hapusFotoProfil,
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        size: 17,
+                      ),
+                      label: const Text('Hapus Foto'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                ],
 
                 const SizedBox(height: 8),
 
                 Text(
-                  widget.akun.nama,
+                  sedangEdit
+                      ? namaController.text.isEmpty
+                          ? widget.akun.nama
+                          : namaController.text
+                      : widget.akun.nama,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,
@@ -386,7 +344,11 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                 const SizedBox(height: 6),
 
                 Text(
-                  widget.akun.email,
+                  sedangEdit
+                      ? emailController.text.isEmpty
+                          ? widget.akun.email
+                          : emailController.text
+                      : widget.akun.email,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white70,
@@ -432,9 +394,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
           const SizedBox(height: 26),
 
-          const Text(
-            'Informasi Akun',
-            style: TextStyle(
+          Text(
+            sedangEdit ? 'Ubah Informasi Akun' : 'Informasi Akun',
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -442,22 +404,24 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
           const SizedBox(height: 14),
 
-          _InformasiProfil(
+          // Semua kolom diedit langsung di halaman ini.
+          _fieldProfil(
+            label: 'Nama Lengkap',
+            controller: namaController,
             ikon: Icons.person_outline_rounded,
-            judul: 'Nama Lengkap',
-            isi: widget.akun.nama,
           ),
 
-          _InformasiProfil(
+          _fieldProfil(
+            label: 'Alamat Email',
+            controller: emailController,
             ikon: Icons.email_outlined,
-            judul: 'Alamat Email',
-            isi: widget.akun.email,
+            keyboardType: TextInputType.emailAddress,
           ),
 
-          _InformasiProfil(
+          _fieldProfil(
+            label: 'NIS/NIP',
+            controller: nisNipController,
             ikon: Icons.badge_outlined,
-            judul: 'NIS/NIP',
-            isi: widget.akun.nisNip,
           ),
 
           _InformasiProfil(
@@ -468,14 +432,23 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
 
           const SizedBox(height: 24),
 
+          // Tombol edit berubah menjadi tombol simpan.
           SizedBox(
             height: 50,
             child: ElevatedButton.icon(
-              onPressed: _editProfil,
-              icon: const Icon(Icons.edit_rounded),
-              label: const Text(
-                'Edit Profil',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              onPressed: sedangEdit
+                  ? _simpanProfil
+                  : _mulaiEditProfil,
+              icon: Icon(
+                sedangEdit
+                    ? Icons.save_outlined
+                    : Icons.edit_rounded,
+              ),
+              label: Text(
+                sedangEdit ? 'Simpan Perubahan' : 'Edit Profil',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.navy,
@@ -487,26 +460,54 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
             ),
           ),
 
-          const SizedBox(height: 12),
-
-          SizedBox(
-            height: 50,
-            child: OutlinedButton.icon(
-              onPressed: _konfirmasiKeluar,
-              icon: const Icon(Icons.logout_rounded),
-              label: const Text(
-                'Keluar dari Akun',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          // Tombol batal hanya muncul dalam mode edit.
+          if (sedangEdit) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 48,
+              child: OutlinedButton.icon(
+                onPressed: _batalEditProfil,
+                icon: const Icon(Icons.close_rounded),
+                label: const Text('Batal'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.navy,
+                  side: const BorderSide(
+                    color: AppColors.navy,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
+
+          const SizedBox(height: 12),
+
+          // LOGOUT tetap tersedia di luar mode edit.
+          if (!sedangEdit)
+            SizedBox(
+              height: 50,
+              child: OutlinedButton.icon(
+                onPressed: _konfirmasiKeluar,
+                icon: const Icon(Icons.logout_rounded),
+                label: const Text(
+                  'Keluar dari Akun',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(
+                    color: Colors.red,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ),
 
           const SizedBox(height: 24),
 
@@ -520,6 +521,42 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _fieldProfil({
+    required String label,
+    required TextEditingController controller,
+    required IconData ikon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: TextField(
+        controller: controller,
+        readOnly: !sedangEdit,
+        keyboardType: keyboardType,
+        onChanged: (_) {
+          setState(() {});
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(ikon),
+          filled: true,
+          fillColor: sedangEdit
+              ? Colors.white
+              : Colors.grey.shade50,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(
+              color: AppColors.lightGray,
+            ),
+          ),
+        ),
       ),
     );
   }
