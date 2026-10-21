@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../data/akun_dummy.dart';
 import '../../utils/app_colors.dart';
+import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final AkunDummy akun;
@@ -111,6 +112,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // Konfirmasi sebelum pengguna keluar dari akun.
+  void konfirmasiLogout() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: const Text(
+            'Keluar dari Akun?',
+            style: TextStyle(
+              color: AppColors.navy,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+            'Apakah kamu yakin ingin keluar dari akun SIMSAR?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text(
+                'Batal',
+                style: TextStyle(
+                  color: AppColors.gray,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                // Tutup dialog dan hapus riwayat halaman sebelumnya.
+                Navigator.pop(dialogContext);
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: const Text('Ya, Keluar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     namaController.dispose();
@@ -149,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 alignment: Alignment.bottomRight,
                 children: [
                   CircleAvatar(
-                    radius:  60,
+                    radius: 60,
                     backgroundColor: AppColors.lightBlue,
                     backgroundImage: fotoProfil != null
                         ? MemoryImage(fotoProfil!)
@@ -307,6 +367,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ],
+
+              const SizedBox(height: 28),
+
+              // TOMBOL LOGOUT
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton.icon(
+                  onPressed: konfirmasiLogout,
+                  icon: const Icon(Icons.logout_rounded),
+                  label: const Text(
+                    'Keluar dari Akun',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(
+                      color: Colors.red,
+                      width: 1.3,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              const Text(
+                'SIMSAR • Sistem Informasi Sarana',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.gray,
+                ),
+              ),
             ],
           ),
         ),
