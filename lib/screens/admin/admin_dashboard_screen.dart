@@ -7,6 +7,7 @@ import '../../utils/app_colors.dart';
 import '../auth/login_screen.dart';
 import 'admin_laporan_screen.dart';
 import 'admin_statistik_screen.dart';
+import 'admin_profile_screen.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
   final AkunDummy akun;
@@ -25,15 +26,12 @@ class AdminDashboardScreen extends StatelessWidget {
           valueListenable: LaporanDummy.laporan,
           builder: (context, daftarLaporan, child) {
             final total = daftarLaporan.length;
-
             final menunggu = daftarLaporan
                 .where((laporan) => laporan.status == 'Menunggu')
                 .length;
-
             final diproses = daftarLaporan
                 .where((laporan) => laporan.status == 'Diproses')
                 .length;
-
             final selesai = daftarLaporan
                 .where((laporan) => laporan.status == 'Selesai')
                 .length;
@@ -90,7 +88,7 @@ class AdminDashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      // Ikon notifikasi
+                      // Notifikasi
                       IconButton(
                         tooltip: 'Notifikasi',
                         onPressed: () {
@@ -100,9 +98,7 @@ class AdminDashboardScreen extends StatelessWidget {
                               return AlertDialog(
                                 title: const Row(
                                   children: [
-                                    Icon(
-                                      Icons.notifications_active_rounded,
-                                    ),
+                                    Icon(Icons.notifications_active_rounded),
                                     SizedBox(width: 10),
                                     Expanded(
                                       child: Text('Notifikasi'),
@@ -127,8 +123,7 @@ class AdminDashboardScreen extends StatelessWidget {
                                             const SizedBox(height: 12),
                                             ...daftarLaporan.take(3).map(
                                               (laporan) => ListTile(
-                                                contentPadding:
-                                                    EdgeInsets.zero,
+                                                contentPadding: EdgeInsets.zero,
                                                 leading: Icon(
                                                   Icons.assignment_rounded,
                                                   color: AppColors.navy,
@@ -198,62 +193,16 @@ class AdminDashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      // Foto profil admin
+                      // Profil admin
                       IconButton(
                         tooltip: 'Profil Admin',
                         onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (dialogContext) {
-                              return AlertDialog(
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 35,
-                                      backgroundColor: AppColors.lightBlue,
-                                      child: Icon(
-                                        Icons.person_rounded,
-                                        size: 40,
-                                        color: AppColors.navy,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 14),
-                                    Text(
-                                      akun.nama,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      'Administrator SIMSAR',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(dialogContext);
-                                    },
-                                    child: const Text('Tutup'),
-                                  ),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      Navigator.pop(dialogContext);
-                                      _konfirmasiKeluar(context);
-                                    },
-                                    icon: const Icon(Icons.logout_rounded),
-                                    label: const Text('Keluar'),
-                                  ),
-                                ],
-                              );
-                            },
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  AdminProfileScreen(akun: akun),
+                            ),
                           );
                         },
                         icon: CircleAvatar(
@@ -381,7 +330,7 @@ class AdminDashboardScreen extends StatelessWidget {
 
                   const SizedBox(height: 26),
 
-                  // Menu utama
+                  // Menu pengelolaan
                   const Text(
                     'Menu Pengelolaan',
                     style: TextStyle(
@@ -477,42 +426,6 @@ class AdminDashboardScreen extends StatelessWidget {
   }
 }
 
-// Dialog konfirmasi logout
-void _konfirmasiKeluar(BuildContext context) {
-  showDialog<void>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: const Text('Keluar dari akun?'),
-        content: const Text(
-          'Apakah kamu yakin ingin keluar dari dashboard admin?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginScreen(),
-                ),
-                (route) => false,
-              );
-            },
-            child: const Text('Keluar'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
 class _KartuStatistik extends StatelessWidget {
   final String judul;
   final int jumlah;
@@ -538,11 +451,7 @@ class _KartuStatistik extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            ikon,
-            color: warna,
-            size: 26,
-          ),
+          Icon(ikon, color: warna, size: 26),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -603,11 +512,7 @@ class _KartuMenuAdmin extends StatelessWidget {
                   color: warna.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
-                  ikon,
-                  color: warna,
-                  size: 25,
-                ),
+                child: Icon(ikon, color: warna, size: 25),
               ),
               const SizedBox(width: 14),
               Expanded(
