@@ -1,5 +1,8 @@
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../data/akun_dummy.dart';
 import '../../utils/app_colors.dart';
@@ -22,9 +25,13 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
   late TextEditingController emailController;
   late TextEditingController nisNipController;
 
+  Uint8List? fotoProfil;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
+
     namaController = TextEditingController(text: widget.akun.nama);
     emailController = TextEditingController(text: widget.akun.email);
     nisNipController = TextEditingController(text: widget.akun.nisNip);
@@ -38,6 +45,110 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
     super.dispose();
   }
 
+  // Memilih foto profil dari perangkat
+  Future<void> _pilihFotoProfil() async {
+    try {
+      final XFile? gambar = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+        maxWidth: 800,
+      );
+
+      if (gambar == null) return;
+
+      final Uint8List bytes = await gambar.readAsBytes();
+
+      if (!mounted) return;
+
+      setState(() {
+        fotoProfil = bytes;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Foto profil berhasil diganti.'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gagal memilih foto. Silakan coba lagi.'),
+        ),
+      );
+    }
+  }
+
+  // Mengembalikan foto profil ke ikon default
+  void _hapusFotoProfil() {
+    setState(() {
+      fotoProfil = null;
+    });
+
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Foto profil dikembalikan ke foto default.'),
+      ),
+    );
+  }
+
+  // Menu untuk mengatur foto profil
+  void _tampilkanMenuFoto() {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(22),
+        ),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Foto Profil Admin',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                ListTile(
+                  leading: const Icon(
+                    Icons.photo_library_outlined,
+                    color: Color(0xFF173A67),
+                  ),
+                  title: const Text('Pilih Foto dari Galeri'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pilihFotoProfil();
+                  },
+                ),
+                if (fotoProfil != null)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.red,
+                    ),
+                    title: const Text('Hapus Foto Profil'),
+                    onTap: _hapusFotoProfil,
+                  ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Mengedit informasi akun
   void _editProfil() {
     namaController.text = widget.akun.nama;
     emailController.text = widget.akun.email;
@@ -97,7 +208,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                 final email = emailController.text.trim();
                 final nisNip = nisNipController.text.trim();
 
-                if (nama.isEmpty || email.isEmpty || nisNip.isEmpty) {
+                if (nama.isEmpty ||
+                    email.isEmpty ||
+                    nisNip.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Semua kolom harus diisi.'),
@@ -128,6 +241,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
     );
   }
 
+  // Konfirmasi logout
   void _konfirmasiKeluar() {
     showDialog<void>(
       context: context,
@@ -149,6 +263,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
               ),
               onPressed: () {
                 Navigator.pop(dialogContext);
+
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
@@ -181,7 +296,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // Kartu profil
+          // Kartu profil admin
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
@@ -198,23 +313,66 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
             ),
             child: Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const CircleAvatar(
-                    radius: 43,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 52,
-                      color: Color(0xFF173A67),
+                // Foto profil dengan tombol kamera
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundColor: Colors.white,
+                        backgroundImage: fotoProfil != null
+                            ? MemoryImage(fotoProfil!)
+                            : null,
+                        child: fotoProfil == null
+                            ? const Icon(
+                                Icons.person_rounded,
+                                size: 58,
+                                color: Color(0xFF173A67),
+                              )
+                            : null,
+                      ),
                     ),
+                    Material(
+                      color: Colors.white,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        onTap: _tampilkanMenuFoto,
+                        customBorder: const CircleBorder(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(9),
+                          child: Icon(
+                            Icons.camera_alt_rounded,
+                            size: 20,
+                            color: Color(0xFF173A67),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                TextButton.icon(
+                  onPressed: _tampilkanMenuFoto,
+                  icon: const Icon(
+                    Icons.add_a_photo_outlined,
+                    size: 17,
+                  ),
+                  label: const Text('Ganti Foto Profil'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: 8),
+
                 Text(
                   widget.akun.nama,
                   textAlign: TextAlign.center,
@@ -224,7 +382,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
                 const SizedBox(height: 6),
+
                 Text(
                   widget.akun.email,
                   textAlign: TextAlign.center,
@@ -233,7 +393,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                     fontSize: 13,
                   ),
                 ),
+
                 const SizedBox(height: 14),
+
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
