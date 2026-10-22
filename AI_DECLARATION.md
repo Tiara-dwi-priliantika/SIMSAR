@@ -10,10 +10,13 @@
 
 Alat: Penggunaan 
 
- ChatGPT : Membantu memahami kode Flutter/Dart, menyusun atau merevisi bagian kode berdasarkan kebutuhan, menjelaskan pesan kesalahan, serta memberi saran perbaikan dan perintah Git.
- Visual Studio Code : Editor yang digunakan untuk menulis, mengubah, dan memeriksa kode proyek. 
- Flutter CLI (`flutter analyze`) : Memeriksa kode dan menampilkan error, warning, atau info analisis. 
- Git dan GitHub : Mengelola riwayat perubahan dan menyimpan kode proyek melalui version control. 
+ChatGPT : Membantu memahami kode Flutter/Dart, menyusun atau merevisi bagian kode berdasarkan kebutuhan, menjelaskan pesan kesalahan, serta memberi saran perbaikan dan perintah Git.
+
+Visual Studio Code : Editor yang digunakan untuk menulis, mengubah, dan memeriksa kode proyek. 
+
+Flutter CLI (`flutter analyze`) : Memeriksa kode dan menampilkan error, warning, atau info analisis. 
+
+Git dan GitHub : Mengelola riwayat perubahan dan menyimpan kode proyek melalui version control. 
 
 
 ## 2. Pembagian Peran AI dan Pengerjaan Manual
