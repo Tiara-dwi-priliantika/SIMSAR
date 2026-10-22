@@ -123,22 +123,6 @@ Untuk penggunaan nyata, aplikasi masih memerlukan backend/database, autentikasi 
 
 ## Dokumentasi aplikasi
 
-Tambahkan tangkapan layar aktual aplikasi pada bagian ini jika diperlukan, misalnya:
-
-- Splash screen dan login.
-- Beranda pengguna.
-- Formulir pelaporan kerusakan.
-- Riwayat dan detail laporan.
-- Dashboard admin.
-- Kelola laporan dan statistik.
-- Profil pengguna dan admin.
-
-Pastikan gambar yang ditambahkan merupakan tangkapan layar dari versi aplikasi yang benar-benar dijalankan. Simpan gambar, misalnya, di folder `docs/images/`, lalu tautkan dengan Markdown seperti berikut:
-
-```markdown
-![Beranda SIMSAR](docs/images/beranda-simsar.png)
-```
-
 ## Pengembang
 
 - **Nama:** Tiara Dwi Priliantika
