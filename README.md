@@ -64,7 +64,7 @@ simsar/
 ├── test/
 ├── pubspec.yaml
 └── README.md
-```
+
 
 ## Persyaratan
 
@@ -141,7 +141,3 @@ Beberapa hal yang dapat dikembangkan pada tahap berikutnya:
 - Memperkuat autentikasi dan pengelolaan hak akses.
 - Melakukan pengujian fungsional pada perangkat Android.
 - Menambahkan notifikasi apabila dibutuhkan.
-
----
-
-README ini menjelaskan struktur dan fungsi yang teridentifikasi dari kode proyek yang diperiksa. Perbarui isinya apabila fitur, teknologi, atau arsitektur aplikasi berubah.
