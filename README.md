@@ -46,23 +46,41 @@ Fitur di atas dideskripsikan berdasarkan struktur dan kode yang tersedia. Keters
 ## Struktur direktori utama
 
 simsar/
+
 ├── assets/
+
 │   └── logo_simsar.png
+
 ├── lib/
+
 │   ├── data/
+
 │   │   ├── akun_dummy.dart
+
 │   │   └── laporan_dummy.dart
+
 │   ├── screens/
+
 │   │   ├── admin/
+
 │   │   ├── auth/
+
 │   │   ├── siswa/
+
 │   │   └── splash_screen.dart
+
 │   ├── utils/
+
 │   │   ├── app_colors.dart
+
 │   │   └── app_theme.dart
+
 │   └── main.dart
+
 ├── test/
+
 ├── pubspec.yaml
+
 └── README.md
 
 
