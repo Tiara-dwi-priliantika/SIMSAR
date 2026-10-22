@@ -22,12 +22,17 @@ AI digunakan sebagai alat bantu, sedangkan keputusan akhir, pemeriksaan, penyesu
 
  Modul atau aktivitas:  Peran AI : Peran pengembang secara manual 
 
- Autentikasi dan navigasi login : Membantu menjelaskan alur login dan memberi contoh navigasi berdasarkan peran akun. : Menempatkan kode pada proyek, mencocokkan nama class dan jalur import, lalu menguji alur login sesuai struktur aplikasi. 
- Dashboard admin : Membantu menyusun dan merapikan kode tampilan, ringkasan jumlah laporan, serta navigasi ke halaman lain. : Menyesuaikan kode dengan struktur proyek dan menjaga tampilan yang telah dipilih. 
- Kelola laporan : Membantu menyusun tampilan daftar laporan dan contoh perubahan status laporan. : Memeriksa kecocokan dengan model `Laporan` dan `LaporanDummy`, termasuk nama properti serta cara memperbarui data. 
- Statistik laporan : Membantu menyusun perhitungan jumlah laporan berdasarkan status dan tampilan ringkasan statistik. : Memeriksa perhitungan serta memperbaiki nama class dan pemanggilannya berdasarkan hasil `flutter analyze`. 
- Penanganan masalah kode : Membantu menjelaskan pesan error, warning, dan saran perbaikannya. : Menjalankan `flutter analyze`, menerapkan perubahan, lalu memeriksa kembali hasil analisis. 
- Git dan GitHub : Membantu menyarankan perintah Git dan merumuskan pesan commit. : Menjalankan perintah di terminal dan memeriksa perubahan sebelum melakukan commit dan push. 
+Autentikasi dan navigasi login : Membantu menjelaskan alur login dan memberi contoh navigasi berdasarkan peran akun. : Menempatkan kode pada proyek, mencocokkan nama class dan jalur import, lalu menguji alur login sesuai struktur aplikasi. 
+
+Dashboard admin : Membantu menyusun dan merapikan kode tampilan, ringkasan jumlah laporan, serta navigasi ke halaman lain. : Menyesuaikan kode dengan struktur proyek dan menjaga tampilan yang telah dipilih. 
+
+Kelola laporan : Membantu menyusun tampilan daftar laporan dan contoh perubahan status laporan. : Memeriksa kecocokan dengan model `Laporan` dan `LaporanDummy`, termasuk nama properti serta cara memperbarui data. 
+
+Statistik laporan : Membantu menyusun perhitungan jumlah laporan berdasarkan status dan tampilan ringkasan statistik. : Memeriksa perhitungan serta memperbaiki nama class dan pemanggilannya berdasarkan hasil `flutter analyze`. 
+
+Penanganan masalah kode : Membantu menjelaskan pesan error, warning, dan saran perbaikannya. : Menjalankan `flutter analyze`, menerapkan perubahan, lalu memeriksa kembali hasil analisis. 
+
+Git dan GitHub : Membantu menyarankan perintah Git dan merumuskan pesan commit. : Menjalankan perintah di terminal dan memeriksa perubahan sebelum melakukan commit dan push. 
 
 **Pernyataan tentang kode manual:** Dokumen ini tidak mengklaim bahwa suatu modul sepenuhnya ditulis manual jika hal tersebut belum diverifikasi. Bagian yang diketik atau dirancang sendiri tanpa bantuan AI dapat ditambahkan secara spesifik oleh pengembang berdasarkan riwayat kerja yang sebenarnya.
 
@@ -72,5 +77,3 @@ Pengembang perlu mengganti seluruh pemanggilan `_barisStatistik(...)` menjadi `_
 ## 5. Pernyataan Transparansi
 
 Saya menyatakan bahwa AI digunakan sebagai alat bantu dalam proses pengembangan SIMSAR, terutama untuk memahami kode, memperoleh contoh implementasi, dan membantu menelusuri masalah pemrograman. Penggunaan AI tidak menggantikan tanggung jawab saya dalam memeriksa, menyesuaikan, menguji, dan memahami kode yang digunakan. Saya bertanggung jawab atas keakuratan deklarasi ini serta hasil akhir proyek.
-
----
