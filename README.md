@@ -122,7 +122,7 @@ Pada kode yang diperiksa, akun dan laporan dikelola melalui kelas `PengelolaAkun
 Untuk penggunaan nyata, aplikasi masih memerlukan backend/database, autentikasi yang aman, penyimpanan laporan dan foto secara persisten, serta pengujian keamanan dan fungsional.
 
 ## Dokumentasi aplikasi
-
+https://drive.google.com/drive/folders/1Y9cOfqKpp0TwwbOPtIvZsgcAylB2VcaW 
 ## Pengembang
 
 - **Nama:** Tiara Dwi Priliantika
